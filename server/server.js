@@ -6,12 +6,14 @@ const socketIO = require('socket.io');
 
 const {generateMessage, generateLocationMessage} = require('./ultils/message');
 const {isRealString} = require('./ultils/validation');
+const {Users} = require('./ultils/users');
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
-
+const users = new Users();
 
 
 
@@ -26,35 +28,51 @@ io.on('connection', (socket) => {
 
 	socket.on('join', (params, callback) => {
 		if(!isRealString(params.name) || !isRealString(params.room)) {
-			callback('Name and room name are requred')
+			return callback('Name and room name are requred')
 		}
 
 		socket.join(params.room)
+		users.removeUser(socket.id)
+		users.addUser(socket.id, params.name, params.room)
+
+		io.to(params.room).emit('updateUserList', users.getUserList(params.room))
 
 		socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
 		socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`))
-
-
 		callback()
 	});
 
 	//create message is a client side listener
 	//specify data to the event listener
 	socket.on('createMessage', (messageData, callback) => {
-		console.log('new message data:', messageData)
-		io.emit('newMessage', generateMessage(messageData.from, messageData.text))
+		const user = users.getUser(socket.id)
+
+		if (user && isRealString(messageData.text)) {
+			io.to(user.room).emit('newMessage', generateMessage(user.name, messageData.text))
+		}
+		
 		callback()
 	});
 
 
 	socket.on('createLocationMessage', (locationData) => {
-		console.log('new location messsge', locationData)
-		io.emit('newLocationMessage', generateLocationMessage('Admin', `${locationData.lat},${locationData.lng}`))
+		const user = users.getUser(socket.id)
+
+		if (user) {
+			io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, `${locationData.lat},${locationData.lng}`))
+		}
+
+		
 	});
 
 
 	socket.on('disconnect', () => {
-		console.log('User was disconnected from server')
+		const user = users.removeUser(socket.id)
+
+		if (user) {
+			io.to(user.room).emit('updateUserList', users.getUserList(user.room))
+			io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left the room.`))
+		}
 	})
 });
 
