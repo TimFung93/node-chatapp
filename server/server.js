@@ -3,6 +3,9 @@ const http = require('http');
 const path = require('path');
 const socketIO = require('socket.io');
 
+
+const {generateMessage, generateLocationMessage} = require('./ultils/message');
+
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
 const app = express();
@@ -18,17 +21,27 @@ app.use(express.static(publicPath))
 io.on('connection', (socket) => {
 	console.log('New user connected')
 
+	socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+	
+	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+	
+
+	
+
+	//create message is a client side listener
 	//specify data to the event listener
-
-
-	socket.on('createMessage', (messageData) => {
+	socket.on('createMessage', (messageData, callback) => {
 		console.log('new message data:', messageData)
-		io.emit('newMessage', {
-			from: messageData.from,
-			text: messageData.text,
-			createdAt: new Date().getTime()
-		})
+		io.emit('newMessage', generateMessage(messageData.from, messageData.text))
+		callback()
 	});
+
+
+	socket.on('createLocationMessage', (locationData) => {
+		console.log('new location messsge', locationData)
+		io.emit('newLocationMessage', generateLocationMessage('Admin', `${locationData.lat},${locationData.lng}`))
+	});
+
 
 	socket.on('disconnect', () => {
 		console.log('User was disconnected from server')
