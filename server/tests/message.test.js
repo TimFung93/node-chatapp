@@ -1,6 +1,6 @@
 const expect = require('expect');
 
-const {generateMessage, generateLocationMessage} = require('../ultils/message.js');
+const {generateMessage, generateLocationMessage} = require('../ultils/message');
 
 describe('generateMessage function', () => {
 	it('Should generate correct message object', () => {
