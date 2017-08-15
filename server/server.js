@@ -22,18 +22,32 @@ app.use(express.static(publicPath))
 //lets you resgister an event listener
 io.on('connection', (socket) => {
 	console.log('New user connected')
-
-	
-	
-
 	socket.on('join', (params, callback) => {
 		if(!isRealString(params.name) || !isRealString(params.room)) {
 			return callback('Name and room name are requred')
 		}
 
+	
+
+
 		socket.join(params.room)
 		users.removeUser(socket.id)
+
+		
+
+
+
 		users.addUser(socket.id, params.name, params.room)
+
+
+		const getList = users.getUserList(params.room)
+
+		for (let i = 0; i < getList.length; i++) {
+			if(getList[i] === getList[i + 1]) {
+				return callback('Name in use')
+			}
+		}
+
 
 		io.to(params.room).emit('updateUserList', users.getUserList(params.room))
 
@@ -77,12 +91,6 @@ io.on('connection', (socket) => {
 });
 
 
-
-
-
-// app.get('/', (req,res) => {
-// 	res.render('index.html')
-// });
 
 
 server.listen(port, () => {

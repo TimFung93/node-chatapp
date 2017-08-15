@@ -35,6 +35,7 @@ describe('Users', () => {
 		expect(newUser.users).toEqual([_user])
 	})
 
+
 	it('Should return names for Room 1', () => {
 		const userList = users.getUserList('Room 1')
 
