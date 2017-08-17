@@ -31,20 +31,16 @@ io.on('connection', (socket) => {
 
 
 		socket.join(params.room)
-		users.removeUser(socket.id)
-
-		
-
 
 
 		users.addUser(socket.id, params.name, params.room)
-
-
 		const getList = users.getUserList(params.room)
 
-		for (let i = 0; i < getList.length; i++) {
-			if(getList[i] === getList[i + 1]) {
-				return callback('Name in use')
+		for(let i = 0; i < getList.length; i++) {
+			for(let j = i; j <= i; j++) {
+				if (getList[i] === getList[j + 1]) {
+					return callback('Name in use')
+				}
 			}
 		}
 
