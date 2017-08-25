@@ -7,6 +7,7 @@ const socketIO = require('socket.io');
 const {generateMessage, generateLocationMessage} = require('./ultils/message');
 const {isRealString} = require('./ultils/validation');
 const {Users} = require('./ultils/users');
+const {removeDup} = require('./ultils/removeDup')
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -27,26 +28,17 @@ io.on('connection', (socket) => {
 			return callback('Name and room name are requred')
 		}
 
-	
-
-
 		socket.join(params.room)
 
-
 		users.addUser(socket.id, params.name, params.room)
-		const getList = users.getUserList(params.room)
-
-		for(let i = 0; i < getList.length; i++) {
-			for(let j = i; j <= i; j++) {
-				if (getList[i] === getList[j + 1]) {
-					return callback('Name in use')
-				}
-			}
+		//list of all users
+		const getList = removeDup(users.getUserList(params.room))
+		if (getList === 'Name in use') {
+			return callback('Name in use')
 		}
 
-
 		io.to(params.room).emit('updateUserList', users.getUserList(params.room))
-
+		
 		socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
 		socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`))
 		callback()
