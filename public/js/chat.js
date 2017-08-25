@@ -20,8 +20,6 @@ function scrollToBottom() {
 
 
 
-
-
 socket.on('connect', function() {
 	const params = jQuery.deparam(window.location.search)
 	
@@ -35,14 +33,22 @@ socket.on('connect', function() {
 	})
 });
 
-socket.on('updateUserList', function(user) {
-	const ol = jQuery('<ol></ol>');
-	user.forEach(function(user) {
-		ol.append(jQuery('<li></li>').text(user))
-	})
 
+
+
+
+socket.on('updateUserList', function(user) {
+	const ol = jQuery('<ol></ol>')
+	user.forEach(function(user) {
+		ol.append(jQuery('<li></li>').attr("id", user).text(user))
+	})
+ 
 	jQuery('#users').html(ol)
+
+
 });
+
+
 
 socket.on('newMessage', function(newMessage) {
 	const formattedTime = moment(newMessage.createdAt).format('h:mm A')
@@ -52,6 +58,8 @@ socket.on('newMessage', function(newMessage) {
 		from: newMessage.From,
 		createdAt: formattedTime
 	})
+
+
 
 	jQuery('#messages').append(html)
 	scrollToBottom()
@@ -70,6 +78,19 @@ socket.on('newLocationMessage', function(locationMessage) {
 	jQuery('#messages').append(html)
 	scrollToBottom()
 });
+
+
+
+jQuery("#users").click(function(event) {
+	const userId = event.target.id
+	console.log('I am user id', userId)
+	alert(event.target.id)
+	socket.emit('removeUser', {
+		userId
+	});
+});
+
+
 
 
 

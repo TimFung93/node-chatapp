@@ -27,7 +27,6 @@ io.on('connection', (socket) => {
 		if(!isRealString(params.name) || !isRealString(params.room)) {
 			return callback('Name and room name are requred')
 		}
-
 		socket.join(params.room)
 
 		users.addUser(socket.id, params.name, params.room)
@@ -37,12 +36,28 @@ io.on('connection', (socket) => {
 			return callback('Name in use')
 		}
 
+		//need admin privledges to add class
+
+
+
 		io.to(params.room).emit('updateUserList', users.getUserList(params.room))
 		
 		socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
 		socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`))
 		callback()
 	});
+
+	socket.on('removeUser', (userId) => {
+		console.log(userId)
+		//const user = users.removeUser(id)
+
+
+	//socket.emit('removeUser', {id: socket.id})
+
+	})
+
+
+
 
 	//create message is a client side listener
 	//specify data to the event listener
@@ -68,6 +83,7 @@ io.on('connection', (socket) => {
 	});
 
 
+
 	socket.on('disconnect', () => {
 		const user = users.removeUser(socket.id)
 
@@ -77,6 +93,8 @@ io.on('connection', (socket) => {
 		}
 	})
 });
+
+
 
 
 
