@@ -44,8 +44,15 @@ class Users {
 			return user.name
 		})
 
+		const userListId = users.map(user => {
+			return user.id
+		})
+
+		//parellell lists of user names and id
 		return userList
 	}
+
+
 
 };
 

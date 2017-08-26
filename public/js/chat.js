@@ -48,6 +48,13 @@ socket.on('updateUserList', function(user) {
 
 });
 
+socket.on('removeUser', function(userId) {
+	console.log(userId)
+	jQuery('#user').find('ol').find('li').click(function(event) {
+		alert(event.target.id)
+		jQuery(this).addClass('hide')
+	})
+})
 
 
 socket.on('newMessage', function(newMessage) {
@@ -81,14 +88,22 @@ socket.on('newLocationMessage', function(locationMessage) {
 
 
 
-jQuery("#users").click(function(event) {
-	const userId = event.target.id
-	console.log('I am user id', userId)
-	alert(event.target.id)
-	socket.emit('removeUser', {
-		userId
-	});
-});
+
+
+
+
+
+
+// jQuery("#users").click(function(event) {
+// 	const userId = event.target.id
+// 	console.log('I am user id', userId)
+// 	alert(event.target.id)
+
+// 	socket.on('removeUser', function(userId) {
+
+// 		console.log(userId)
+// 	})
+// });
 
 
 

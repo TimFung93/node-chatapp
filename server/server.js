@@ -49,12 +49,12 @@ io.on('connection', (socket) => {
 
 	socket.on('removeUser', (userId) => {
 		console.log(userId)
-		//const user = users.removeUser(id)
 
-
-	//socket.emit('removeUser', {id: socket.id})
+		socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', 'User has been removed'))
 
 	})
+	// have the id of the user that logged in, not all the users
+	socket.emit('removeUser', {id: socket.id})
 
 
 
