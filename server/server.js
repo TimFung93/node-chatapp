@@ -7,7 +7,7 @@ const socketIO = require('socket.io');
 const {generateMessage, generateLocationMessage} = require('./ultils/message');
 const {isRealString} = require('./ultils/validation');
 const {Users} = require('./ultils/users');
-const {removeDup} = require('./ultils/removeDup')
+const {remove_duplicate} = require('./ultils/remove_duplicate')
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -31,8 +31,8 @@ io.on('connection', (socket) => {
 
 		users.addUser(socket.id, params.name, params.room)
 		//list of all users
-		const getList = removeDup(users.getUserList(params.room))
-		if (getList === 'Name in use') {
+		const checkList = remove_duplicate(users.getUserList(params.room))
+		if (checkList === 'Name in use') {
 			return callback('Name in use')
 		}
 

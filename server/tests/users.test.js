@@ -63,7 +63,6 @@ describe('Users', () => {
 	it('Should not remove a user', () => {
 		const userId = 0
 		const removeUser = users.removeUser(userId)
-		console.log(removeUser)
 		expect(removeUser).toNotExist()
 		expect(users.users.length).toBe(3)
 	})

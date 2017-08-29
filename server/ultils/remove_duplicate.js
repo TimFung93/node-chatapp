@@ -1,4 +1,4 @@
-const removeDup = (arr) => {
+const remove_duplicate = (arr) => {
 	let copyArr = arr
 
 	//remove duplicate
@@ -8,13 +8,18 @@ const removeDup = (arr) => {
 
 	//compare to old array
 	if (arr.length === copyArr.length) {
-		return 'No Dupilicates'
+		return 'No duplicates'
 	} else {
 		return 'Name in use'
 	}
 
 }
 
+
+
+
+
+
 module.exports = {
-	removeDup
+	remove_duplicate
 }

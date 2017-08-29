@@ -38,20 +38,21 @@ socket.on('connect', function() {
 
 
 socket.on('updateUserList', function(user) {
-	const ol = jQuery('<ol></ol>')
+	const ol = jQuery('<ol></ol>').attr("id", "users")
 	user.forEach(function(user) {
 		ol.append(jQuery('<li></li>').attr("id", user).text(user))
 	})
  
-	jQuery('#users').html(ol)
+	jQuery('#userList').html(ol)
 
 
 });
 
 socket.on('removeUser', function(userId) {
 	console.log(userId)
-	jQuery('#user').find('ol').find('li').click(function(event) {
-		alert(event.target.id)
+	jQuery('#userList li').click(function() {
+		//alert(event.target.id)
+		alert(this.id)
 		jQuery(this).addClass('hide')
 	})
 })
